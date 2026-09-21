@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You have an invite! Andrei's 1st Birthday Race</title>
+<meta name="description" content="You're invited to a race car birthday party. Tap the card to open your invitation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;800&family=Racing+Sans+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E8EBF2;
+    --card-shadow: #14161B;
+    --red: #D42A26;
+    --yellow: #FFC933;
+    --asphalt: #14161B;
+    --focus: #14161B;
+    --display: "Racing Sans One", Impact, "Arial Narrow Bold", sans-serif;
+    --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0B0C10;
+      --card-shadow: #FFC933;
+      --focus: #FFC933;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B0C10;
+    --card-shadow: #FFC933;
+    --focus: #FFC933;
+  }
+
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    display: grid; place-items: center;
+    padding: 28px 20px 40px;
+    background: var(--bg);
+    font-family: var(--body);
+    -webkit-tap-highlight-color: transparent;
+  }
+  p, h1 { margin: 0; }
+
+  /* The whole card is one link */
+  .card {
+    container-type: inline-size;
+    display: block;
+    width: min(100%, 420px);
+    position: relative; overflow: hidden;
+    background: var(--red); color: #fff;
+    border: 3px solid var(--asphalt);
+    border-radius: 30px;
+    box-shadow: 10px 10px 0 var(--card-shadow);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover { transform: translate(-3px, -3px); box-shadow: 13px 13px 0 var(--card-shadow); }
+  .card:active { transform: translate(6px, 6px); box-shadow: 4px 4px 0 var(--card-shadow); }
+  .card:focus-visible { outline: 4px solid var(--focus); outline-offset: 6px; }
+
+  .flag {
+    height: 7cqw;
+    background: conic-gradient(#fff 25%, var(--asphalt) 0 50%, #fff 0 75%, var(--asphalt) 0) 0 0 / 7cqw 7cqw;
+    border-bottom: 3px solid var(--asphalt);
+  }
+  .body { padding: 6cqw 7cqw 0; text-align: center; }
+
+  .sticker {
+    display: inline-block; transform: rotate(-3deg);
+    background: var(--yellow); color: var(--asphalt);
+    font: 5.4cqw/1 var(--display);
+    padding: 3cqw 4.4cqw; border-radius: 3cqw;
+    border: 2.5px solid var(--asphalt);
+  }
+  .name  { margin-top: 4.5cqw; font: 8.4cqw/1 var(--display); }
+  .first {
+    font: 40cqw/.86 var(--display);
+    color: var(--yellow);
+    text-shadow: 1.2cqw 1.2cqw 0 var(--asphalt);
+    margin: 0.5cqw 0 1cqw;
+  }
+  h1 { font: inherit; }
+  .event { font: 10.6cqw/1 var(--display); letter-spacing: .01em; }
+  .tagline { margin: 4cqw auto 0; max-width: 30ch; font-weight: 600; font-size: 4.3cqw; line-height: 1.45; }
+
+  .facts {
+    margin: 5cqw 0 0; padding: 4cqw 5cqw;
+    background: var(--asphalt); border-radius: 5cqw;
+    display: grid; gap: 3cqw; text-align: left;
+  }
+  .fact { display: flex; align-items: center; gap: 3.4cqw; font-weight: 800; font-size: 4.6cqw; line-height: 1.25; }
+  .fact svg { flex: none; width: 6cqw; height: 6cqw; color: var(--yellow); }
+
+  .cta {
+    margin-top: 5cqw;
+    display: flex; align-items: center; justify-content: center; gap: 2.4cqw;
+    min-height: 13cqw; border-radius: 999px;
+    background: var(--yellow); color: var(--asphalt);
+    border: 2.5px solid var(--asphalt);
+    font-weight: 800; font-size: 4.6cqw;
+  }
+  .cta svg { width: 5.4cqw; height: 5.4cqw; transition: transform .18s ease; }
+  .card:hover .cta svg { transform: translateX(4px); }
+
+  /* Track and car */
+  .stage { position: relative; margin-top: 3cqw; }
+  .lane { position: relative; height: 24cqw; z-index: 1; margin-bottom: -1.2cqw; overflow: hidden; }
+  .car {
+    position: absolute; right: 8cqw; bottom: 0;
+    width: 46cqw; height: auto; overflow: visible;
+    animation: arrive 1.5s cubic-bezier(.16, .84, .3, 1) both;
+  }
+  .wheel {
+    transform-box: fill-box; transform-origin: center;
+    animation: spinDown 1.5s cubic-bezier(.16, .84, .3, 1) both;
+  }
+  .road { position: relative; height: 15cqw; background: var(--asphalt); }
+  .road::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3.4cqw;
+    background: repeating-linear-gradient(90deg, #fff 0 5cqw, var(--asphalt) 5cqw 10cqw);
+    border-top: 2px solid #fff;
+  }
+  .road::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 9cqw; height: 1.1cqw;
+    background: repeating-linear-gradient(90deg, var(--yellow) 0 8cqw, transparent 8cqw 16cqw);
+    animation: dashes 1.5s cubic-bezier(.16, .84, .3, 1) both;
+  }
+  @keyframes arrive { from { transform: translateX(-120cqw); } to { transform: none; } }
+  @keyframes spinDown { to { transform: rotate(1440deg); } }
+  @keyframes dashes { from { background-position: 0 0; } to { background-position: -160cqw 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .car, .wheel, .road::after { animation: none; }
+    .card, .cta svg { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="card" href="https://r28policher.github.io/dedoybirthdayrace/" target="_blank" rel="noopener"
+   aria-label="Andrei's 1st Birthday Race. Open your invitation.">
+  <div class="flag" aria-hidden="true"></div>
+
+  <div class="body">
+    <p class="sticker">You have an invite!</p>
+
+    <h1>
+      <span class="name" style="display:block">Andrei's</span>
+      <span class="first" style="display:block">1st</span>
+      <span class="event" style="display:block">Birthday Race</span>
+    </h1>
+
+    <p class="tagline">Rev your engines and join us for a day of racing, snacks and cake.</p>
+
+    <div class="facts">
+      <p class="fact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Saturday, December 12, 2026</span>
+      </p>
+      <p class="fact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span>2:00 PM</span>
+      </p>
+      <p class="fact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>KFC, Taguig City</span>
+      </p>
+    </div>
+
+    <p class="cta">
+      <span>Tap to open your invitation</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </p>
+  </div>
+
+  <div class="stage" aria-hidden="true">
+    <div class="lane">
+      <svg class="car" viewBox="0 0 310 126" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="bodyClip">
+            <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z"/>
+          </clipPath>
+        </defs>
+        <!-- rear wing -->
+        <rect x="2" y="24" width="42" height="9" rx="4" fill="#14161B"/>
+        <rect x="17" y="33" width="7" height="28" fill="#14161B"/>
+        <!-- helmet -->
+        <circle cx="150" cy="29" r="13" fill="#fff" stroke="#14161B" stroke-width="3"/>
+        <path d="M152 23h12a4 4 0 0 1 4 4v3h-16z" fill="#14161B"/>
+        <!-- body -->
+        <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z" fill="#FFC933" stroke="#14161B" stroke-width="4" stroke-linejoin="round"/>
+        <g clip-path="url(#bodyClip)">
+          <path d="M0 83H310" stroke="#fff" stroke-width="8"/>
+          <path d="M0 96H310" stroke="#D9A21A" stroke-width="10"/>
+        </g>
+        <path d="M168 33l14 21h-26z" fill="#BFD4FF" stroke="#14161B" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="112" cy="80" r="16" fill="#fff" stroke="#14161B" stroke-width="3"/>
+        <text x="112" y="88" text-anchor="middle" font-family="Racing Sans One, Impact, sans-serif" font-size="23" fill="#D42A26">1</text>
+        <path d="M280 72q14 2 14 12h-14z" fill="#fff"/>
+        <!-- wheels -->
+        <g transform="translate(76 100)">
+          <circle r="28" fill="#14161B"/>
+          <g class="wheel">
+            <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
+            <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
+          </g>
+        </g>
+        <g transform="translate(232 100)">
+          <circle r="28" fill="#14161B"/>
+          <g class="wheel">
+            <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
+            <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="road"></div>
+  </div>
+</a>
+
+</body>
+</html>
