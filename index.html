@@ -50,20 +50,6 @@
 
   .stage-wrap { position: relative; width: min(100%, 420px); }
 
-  /* Edit (gear) button — sits OUTSIDE the <a> so it never triggers navigation */
-  .edit-fab {
-    position: absolute; top: -14px; right: -14px; z-index: 30;
-    width: 44px; height: 44px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: var(--asphalt); color: #fff;
-    border: 3px solid var(--yellow);
-    box-shadow: 3px 3px 0 rgba(0,0,0,.25);
-    cursor: pointer;
-  }
-  .edit-fab svg { width: 20px; height: 20px; }
-  .edit-fab:hover { transform: rotate(20deg); }
-  .edit-fab:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
-
   /* The whole card is one link */
   .card {
     container-type: inline-size;
@@ -145,7 +131,7 @@
 
   /* Track, continuously driving car, and racing decoration */
   .stage { position: relative; margin-top: 3cqw; }
-  .lane { position: relative; height: 26cqw; z-index: 1; margin-bottom: -1.2cqw; overflow: hidden; background: linear-gradient(180deg, transparent, rgba(0,0,0,.08)); }
+  .lane { position: relative; height: 26cqw; z-index: 1; margin-bottom: -1.2cqw; overflow-x: hidden; overflow-y: visible; background: linear-gradient(180deg, transparent, rgba(0,0,0,.08)); }
 
   .cloud { position: absolute; top: 10%; opacity: .5; }
   .cloud svg { width: 16cqw; height: auto; fill: #fff; }
@@ -165,7 +151,7 @@
   @keyframes streak { from { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateX(-150cqw); opacity: 0; } }
 
   .carTrack {
-    position: absolute; left: 0; right: 0; bottom: -1.5cqw;
+    position: absolute; left: 0; right: 0; bottom: 0;
     animation: drive 4.5s linear infinite;
   }
   @keyframes drive {
@@ -174,7 +160,7 @@
   }
   .car { width: 46cqw; height: auto; overflow: visible; display: block; position: relative; z-index: 1; }
   .carTrack::after {
-    content: ""; position: absolute; left: 50%; bottom: -0.6cqw;
+    content: ""; position: absolute; left: 50%; bottom: 0.3cqw;
     width: 34cqw; height: 2.6cqw; border-radius: 50%;
     background: rgba(0,0,0,.32);
     filter: blur(1.5px);
@@ -211,52 +197,12 @@
     .carTrack, .wheel, .puff, .road::after, .flag, .sticker, .cta::before, .cloud { animation: none !important; }
   }
 
-  /* ---------- Edit panel ---------- */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(10,10,14,.6);
-    display: none; align-items: flex-start; justify-content: center;
-    padding: 5vh 16px; overflow-y: auto;
-    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    width: min(480px, 100%); background: #fff; color: #14161B;
-    border-radius: 20px; padding: 24px 22px 22px;
-    font-family: var(--body);
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-  }
-  .modal h2 { font: 800 1.4rem/1.2 var(--body); margin: 0 0 4px; }
-  .modal .hint { color: #5A5F6E; font-size: .88rem; margin: 0 0 18px; line-height: 1.5; }
-  .field { display: block; margin-bottom: 14px; }
-  .field span { display: block; font-weight: 700; font-size: .84rem; margin-bottom: 6px; }
-  .field input {
-    width: 100%; padding: 10px 12px; border-radius: 10px;
-    border: 1.5px solid #D5D8E2; font: inherit; font-size: .95rem;
-  }
-  .field input:focus { outline: none; border-color: var(--red); }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .colorRow { display: flex; align-items: center; gap: 10px; }
-  .colorRow input[type="color"] { width: 42px; height: 38px; border: none; border-radius: 8px; padding: 0; background: none; }
-  fieldset { border: none; padding: 0; margin: 18px 0 0; }
-  legend { font-weight: 800; font-size: .95rem; margin-bottom: 8px; padding: 0; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
-  .modal-actions button {
-    flex: 1; min-height: 46px; border-radius: 999px; border: 2px solid transparent;
-    font: 800 .95rem/1 var(--body); cursor: pointer;
-  }
-  .btn-save { background: var(--asphalt); color: #fff; }
-  .btn-cancel { background: #EFF1F5; color: #14161B; }
-  .btn-reset { background: none; border: 1.5px solid #D5D8E2; color: #5A5F6E; margin-top: 10px; width: 100%; min-height: 42px; border-radius: 999px; font: 700 .85rem/1 var(--body); cursor: pointer; }
+
 </style>
 </head>
 <body>
 
 <div class="stage-wrap">
-  <button type="button" class="edit-fab" id="editOpen" aria-label="Edit invitation card details">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-  </button>
-
   <a class="card" id="inviteCard" href="https://r28policher.github.io/dedoybirthdayrace/"
      aria-label="Andrei's 1st Birthday Race. Open your invitation.">
     <div class="flag" aria-hidden="true"></div>
@@ -352,142 +298,5 @@
   </a>
 </div>
 
-<!-- Edit panel: lives OUTSIDE the <a> so it never triggers a navigation -->
-<div class="modal-overlay" id="editOverlay">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
-    <h2 id="editTitle">Edit invitation card</h2>
-    <p class="hint">Changes are saved in this browser, so they'll show whenever you open this page again on this device. They won't change what other people see if you've already shared the link with them.</p>
-
-    <form id="editForm">
-      <label class="field"><span>Child's name (with 's)</span><input type="text" id="f_childName" maxlength="40"></label>
-      <div class="grid2">
-        <label class="field"><span>Ordinal (e.g. 1st)</span><input type="text" id="f_ordinal" maxlength="6"></label>
-        <label class="field"><span>Event title</span><input type="text" id="f_eventTitle" maxlength="30"></label>
-      </div>
-      <label class="field"><span>Tagline</span><input type="text" id="f_tagline" maxlength="120"></label>
-      <label class="field"><span>Date</span><input type="text" id="f_dateText" maxlength="40"></label>
-      <label class="field"><span>Time</span><input type="text" id="f_timeText" maxlength="20"></label>
-      <div class="grid2">
-        <label class="field"><span>Venue</span><input type="text" id="f_placeLine1" maxlength="30"></label>
-        <label class="field"><span>City</span><input type="text" id="f_placeLine2" maxlength="30"></label>
-      </div>
-      <label class="field"><span>Button text</span><input type="text" id="f_ctaText" maxlength="40"></label>
-      <label class="field"><span>Link this card opens</span><input type="url" id="f_link" placeholder="https://..."></label>
-
-      <fieldset>
-        <legend>Colors</legend>
-        <div class="grid2">
-          <div class="colorRow"><input type="color" id="f_red"><span>Race red</span></div>
-          <div class="colorRow"><input type="color" id="f_yellow"><span>Flag yellow</span></div>
-        </div>
-        <div class="colorRow" style="margin-top:10px"><input type="color" id="f_asphalt"><span>Asphalt</span></div>
-      </fieldset>
-
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" id="editCancel">Cancel</button>
-        <button type="submit" class="btn-save">Save changes</button>
-      </div>
-      <button type="button" class="btn-reset" id="editReset">Reset to defaults</button>
-    </form>
-  </div>
-</div>
-
-<script>
-(function () {
-  var STORAGE_KEY = "andreiRaceInviteCard";
-
-  var DEFAULTS = {
-    childName: "Andrei's",
-    ordinal: "1st",
-    eventTitle: "Birthday Race",
-    tagline: "Rev your engines and join us for a day of racing, snacks and cake.",
-    dateText: "Saturday, December 12, 2026",
-    timeText: "2:00 PM",
-    placeLine1: "KFC",
-    placeLine2: "Taguig City",
-    ctaText: "Tap to open your invitation",
-    link: "https://r28policher.github.io/dedoybirthdayrace/",
-    red: "#D42A26",
-    yellow: "#FFC933",
-    asphalt: "#14161B"
-  };
-
-  var card = document.getElementById("inviteCard");
-  var overlay = document.getElementById("editOverlay");
-  var form = document.getElementById("editForm");
-
-  function loadData() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return Object.assign({}, DEFAULTS);
-      var parsed = JSON.parse(raw);
-      return Object.assign({}, DEFAULTS, parsed);
-    } catch (e) {
-      return Object.assign({}, DEFAULTS);
-    }
-  }
-
-  function saveData(data) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
-  }
-
-  function applyData(data) {
-    document.querySelectorAll("[data-e]").forEach(function (el) {
-      var key = el.getAttribute("data-e");
-      if (data[key] !== undefined) el.textContent = data[key];
-    });
-    card.setAttribute("href", data.link || DEFAULTS.link);
-    var root = document.documentElement.style;
-    root.setProperty("--red", data.red || DEFAULTS.red);
-    root.setProperty("--yellow", data.yellow || DEFAULTS.yellow);
-    root.setProperty("--asphalt", data.asphalt || DEFAULTS.asphalt);
-    document.title = "You have an invite! " + (data.childName || "") + " " + (data.ordinal || "") + " " + (data.eventTitle || "");
-  }
-
-  function fillForm(data) {
-    Object.keys(DEFAULTS).forEach(function (key) {
-      var input = document.getElementById("f_" + key);
-      if (input) input.value = data[key];
-    });
-  }
-
-  var current = loadData();
-  applyData(current);
-
-  function openEditor() {
-    fillForm(current);
-    overlay.classList.add("open");
-    document.getElementById("f_childName").focus();
-  }
-  function closeEditor() { overlay.classList.remove("open"); }
-
-  document.getElementById("editOpen").addEventListener("click", openEditor);
-  document.getElementById("editCancel").addEventListener("click", closeEditor);
-  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeEditor(); });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && overlay.classList.contains("open")) closeEditor();
-  });
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var next = {};
-    Object.keys(DEFAULTS).forEach(function (key) {
-      var input = document.getElementById("f_" + key);
-      next[key] = input ? input.value : DEFAULTS[key];
-    });
-    current = next;
-    saveData(current);
-    applyData(current);
-    closeEditor();
-  });
-
-  document.getElementById("editReset").addEventListener("click", function () {
-    current = Object.assign({}, DEFAULTS);
-    saveData(current);
-    applyData(current);
-    fillForm(current);
-  });
-})();
-</script>
 </body>
 </html>
