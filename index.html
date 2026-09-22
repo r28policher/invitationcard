@@ -7,7 +7,7 @@
 <meta name="description" content="You're invited to a race car birthday party. Tap the card to open your invitation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;800&family=Racing+Sans+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;800&family=Racing+Sans+One&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #E8EBF2;
@@ -48,11 +48,27 @@
   }
   p, h1 { margin: 0; }
 
+  .stage-wrap { position: relative; width: min(100%, 420px); }
+
+  /* Edit (gear) button — sits OUTSIDE the <a> so it never triggers navigation */
+  .edit-fab {
+    position: absolute; top: -14px; right: -14px; z-index: 30;
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--asphalt); color: #fff;
+    border: 3px solid var(--yellow);
+    box-shadow: 3px 3px 0 rgba(0,0,0,.25);
+    cursor: pointer;
+  }
+  .edit-fab svg { width: 20px; height: 20px; }
+  .edit-fab:hover { transform: rotate(20deg); }
+  .edit-fab:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+
   /* The whole card is one link */
   .card {
     container-type: inline-size;
     display: block;
-    width: min(100%, 420px);
+    width: 100%;
     position: relative; overflow: hidden;
     background: var(--red); color: #fff;
     border: 3px solid var(--asphalt);
@@ -70,8 +86,11 @@
     height: 7cqw;
     background: conic-gradient(#fff 25%, var(--asphalt) 0 50%, #fff 0 75%, var(--asphalt) 0) 0 0 / 7cqw 7cqw;
     border-bottom: 3px solid var(--asphalt);
+    animation: flagShift 1.6s linear infinite;
   }
-  .body { padding: 6cqw 7cqw 0; text-align: center; }
+  @keyframes flagShift { from { background-position: 0 0; } to { background-position: 14cqw 0; } }
+
+  .body { padding: 6cqw 7cqw 0; text-align: center; position: relative; }
 
   .sticker {
     display: inline-block; transform: rotate(-3deg);
@@ -79,6 +98,11 @@
     font: 5.4cqw/1 var(--display);
     padding: 3cqw 4.4cqw; border-radius: 3cqw;
     border: 2.5px solid var(--asphalt);
+    animation: wobble 2.6s ease-in-out infinite;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(2deg); }
   }
   .name  { margin-top: 4.5cqw; font: 8.4cqw/1 var(--display); }
   .first {
@@ -106,22 +130,70 @@
     background: var(--yellow); color: var(--asphalt);
     border: 2.5px solid var(--asphalt);
     font-weight: 800; font-size: 4.6cqw;
+    position: relative; overflow: hidden;
   }
+  .cta::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.55) 12%, transparent 24%);
+    background-size: 60cqw 100%;
+    animation: shine 2.4s ease-in-out infinite;
+  }
+  @keyframes shine { 0% { background-position: -60cqw 0; } 60%, 100% { background-position: 60cqw 0; } }
+  .cta span, .cta svg { position: relative; z-index: 1; }
   .cta svg { width: 5.4cqw; height: 5.4cqw; transition: transform .18s ease; }
   .card:hover .cta svg { transform: translateX(4px); }
 
-  /* Track and car */
+  /* Track, continuously driving car, and racing decoration */
   .stage { position: relative; margin-top: 3cqw; }
-  .lane { position: relative; height: 24cqw; z-index: 1; margin-bottom: -1.2cqw; overflow: hidden; }
-  .car {
-    position: absolute; right: 8cqw; bottom: 0;
-    width: 46cqw; height: auto; overflow: visible;
-    animation: arrive 1.5s cubic-bezier(.16, .84, .3, 1) both;
+  .lane { position: relative; height: 26cqw; z-index: 1; margin-bottom: -1.2cqw; overflow: hidden; background: linear-gradient(180deg, transparent, rgba(0,0,0,.08)); }
+
+  .cloud { position: absolute; top: 10%; opacity: .5; }
+  .cloud svg { width: 16cqw; height: auto; fill: #fff; }
+  .cloud.c1 { animation: driftBack 9s linear infinite; }
+  .cloud.c2 { top: 30%; animation: driftBack 13s linear infinite; animation-delay: -5s; }
+  @keyframes driftBack { from { transform: translateX(140cqw); } to { transform: translateX(-40cqw); } }
+
+  .speedlines { position: absolute; left: 0; right: 0; bottom: 15cqw; height: 8cqw; pointer-events: none; }
+  .speedlines span {
+    position: absolute; height: 2px; width: 14cqw; right: -20cqw;
+    background: rgba(255,255,255,.55); border-radius: 2px;
+    animation: streak 1.1s linear infinite;
+  }
+  .speedlines span:nth-child(1) { top: 0; animation-delay: 0s; }
+  .speedlines span:nth-child(2) { top: 3cqw; animation-delay: .25s; width: 10cqw; }
+  .speedlines span:nth-child(3) { top: 6cqw; animation-delay: .5s; width: 18cqw; }
+  @keyframes streak { from { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } to { transform: translateX(-150cqw); opacity: 0; } }
+
+  .carTrack {
+    position: absolute; left: 0; right: 0; bottom: -1.5cqw;
+    animation: drive 4.5s linear infinite;
+  }
+  @keyframes drive {
+    0%   { transform: translateX(-55cqw); }
+    100% { transform: translateX(150cqw); }
+  }
+  .car { width: 46cqw; height: auto; overflow: visible; display: block; position: relative; z-index: 1; }
+  .carTrack::after {
+    content: ""; position: absolute; left: 50%; bottom: -0.6cqw;
+    width: 34cqw; height: 2.6cqw; border-radius: 50%;
+    background: rgba(0,0,0,.32);
+    filter: blur(1.5px);
+    transform: translateX(-50%);
   }
   .wheel {
     transform-box: fill-box; transform-origin: center;
-    animation: spinDown 1.5s cubic-bezier(.16, .84, .3, 1) both;
+    animation: spin .45s linear infinite;
   }
+  .puff { transform-box: fill-box; transform-origin: center; opacity: 0; animation: puff 1.1s ease-out infinite; }
+  .puff.p2 { animation-delay: .35s; }
+  .puff.p3 { animation-delay: .7s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes puff {
+    0%   { opacity: 0; transform: translate(0,0) scale(.4); }
+    15%  { opacity: .55; }
+    100% { opacity: 0; transform: translate(-18px,-6px) scale(1.5); }
+  }
+
   .road { position: relative; height: 15cqw; background: var(--asphalt); }
   .road::before {
     content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3.4cqw;
@@ -131,99 +203,291 @@
   .road::after {
     content: ""; position: absolute; left: 0; right: 0; top: 9cqw; height: 1.1cqw;
     background: repeating-linear-gradient(90deg, var(--yellow) 0 8cqw, transparent 8cqw 16cqw);
-    animation: dashes 1.5s cubic-bezier(.16, .84, .3, 1) both;
+    animation: dashes 1s linear infinite;
   }
-  @keyframes arrive { from { transform: translateX(-120cqw); } to { transform: none; } }
-  @keyframes spinDown { to { transform: rotate(1440deg); } }
-  @keyframes dashes { from { background-position: 0 0; } to { background-position: -160cqw 0; } }
+  @keyframes dashes { from { background-position: 0 0; } to { background-position: -16cqw 0; } }
+
   @media (prefers-reduced-motion: reduce) {
-    .car, .wheel, .road::after { animation: none; }
-    .card, .cta svg { transition: none; }
+    .carTrack, .wheel, .puff, .road::after, .flag, .sticker, .cta::before, .cloud { animation: none !important; }
   }
+
+  /* ---------- Edit panel ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(10,10,14,.6);
+    display: none; align-items: flex-start; justify-content: center;
+    padding: 5vh 16px; overflow-y: auto;
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    width: min(480px, 100%); background: #fff; color: #14161B;
+    border-radius: 20px; padding: 24px 22px 22px;
+    font-family: var(--body);
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .modal h2 { font: 800 1.4rem/1.2 var(--body); margin: 0 0 4px; }
+  .modal .hint { color: #5A5F6E; font-size: .88rem; margin: 0 0 18px; line-height: 1.5; }
+  .field { display: block; margin-bottom: 14px; }
+  .field span { display: block; font-weight: 700; font-size: .84rem; margin-bottom: 6px; }
+  .field input {
+    width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1.5px solid #D5D8E2; font: inherit; font-size: .95rem;
+  }
+  .field input:focus { outline: none; border-color: var(--red); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .colorRow { display: flex; align-items: center; gap: 10px; }
+  .colorRow input[type="color"] { width: 42px; height: 38px; border: none; border-radius: 8px; padding: 0; background: none; }
+  fieldset { border: none; padding: 0; margin: 18px 0 0; }
+  legend { font-weight: 800; font-size: .95rem; margin-bottom: 8px; padding: 0; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+  .modal-actions button {
+    flex: 1; min-height: 46px; border-radius: 999px; border: 2px solid transparent;
+    font: 800 .95rem/1 var(--body); cursor: pointer;
+  }
+  .btn-save { background: var(--asphalt); color: #fff; }
+  .btn-cancel { background: #EFF1F5; color: #14161B; }
+  .btn-reset { background: none; border: 1.5px solid #D5D8E2; color: #5A5F6E; margin-top: 10px; width: 100%; min-height: 42px; border-radius: 999px; font: 700 .85rem/1 var(--body); cursor: pointer; }
 </style>
 </head>
 <body>
 
-<a class="card" href="https://r28policher.github.io/dedoybirthdayrace/" target="_blank" rel="noopener"
-   aria-label="Andrei's 1st Birthday Race. Open your invitation.">
-  <div class="flag" aria-hidden="true"></div>
+<div class="stage-wrap">
+  <button type="button" class="edit-fab" id="editOpen" aria-label="Edit invitation card details">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+  </button>
 
-  <div class="body">
-    <p class="sticker">You have an invite!</p>
+  <a class="card" id="inviteCard" href="https://r28policher.github.io/dedoybirthdayrace/"
+     aria-label="Andrei's 1st Birthday Race. Open your invitation.">
+    <div class="flag" aria-hidden="true"></div>
 
-    <h1>
-      <span class="name" style="display:block">Andrei's</span>
-      <span class="first" style="display:block">1st</span>
-      <span class="event" style="display:block">Birthday Race</span>
-    </h1>
+    <div class="body">
+      <p class="sticker">You have an invite!</p>
 
-    <p class="tagline">Rev your engines and join us for a day of racing, snacks and cake.</p>
+      <h1>
+        <span class="name" data-e="childName" style="display:block">Andrei's</span>
+        <span class="first" data-e="ordinal" style="display:block">1st</span>
+        <span class="event" data-e="eventTitle" style="display:block">Birthday Race</span>
+      </h1>
 
-    <div class="facts">
-      <p class="fact">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span>Saturday, December 12, 2026</span>
-      </p>
-      <p class="fact">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        <span>2:00 PM</span>
-      </p>
-      <p class="fact">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span>KFC, Taguig City</span>
+      <p class="tagline" data-e="tagline">Rev your engines and join us for a day of racing, snacks and cake.</p>
+
+      <div class="facts">
+        <p class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span data-e="dateText">Saturday, December 12, 2026</span>
+        </p>
+        <p class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span data-e="timeText">2:00 PM</span>
+        </p>
+        <p class="fact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span><span data-e="placeLine1">KFC</span>, <span data-e="placeLine2">Taguig City</span></span>
+        </p>
+      </div>
+
+      <p class="cta">
+        <span data-e="ctaText">Tap to open your invitation</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </p>
     </div>
 
-    <p class="cta">
-      <span>Tap to open your invitation</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </p>
-  </div>
+    <div class="stage" aria-hidden="true">
+      <div class="lane">
+        <div class="cloud c1"><svg viewBox="0 0 64 34"><path d="M14 26a10 10 0 0 1-2-19.8A13 13 0 0 1 37 5a9 9 0 0 1 13 8.3A8 8 0 0 1 48 29H14Z"/></svg></div>
+        <div class="cloud c2"><svg viewBox="0 0 64 34"><path d="M14 26a10 10 0 0 1-2-19.8A13 13 0 0 1 37 5a9 9 0 0 1 13 8.3A8 8 0 0 1 48 29H14Z"/></svg></div>
 
-  <div class="stage" aria-hidden="true">
-    <div class="lane">
-      <svg class="car" viewBox="0 0 310 126" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <clipPath id="bodyClip">
-            <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z"/>
-          </clipPath>
-        </defs>
-        <!-- rear wing -->
-        <rect x="2" y="24" width="42" height="9" rx="4" fill="#14161B"/>
-        <rect x="17" y="33" width="7" height="28" fill="#14161B"/>
-        <!-- helmet -->
-        <circle cx="150" cy="29" r="13" fill="#fff" stroke="#14161B" stroke-width="3"/>
-        <path d="M152 23h12a4 4 0 0 1 4 4v3h-16z" fill="#14161B"/>
-        <!-- body -->
-        <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z" fill="#FFC933" stroke="#14161B" stroke-width="4" stroke-linejoin="round"/>
-        <g clip-path="url(#bodyClip)">
-          <path d="M0 83H310" stroke="#fff" stroke-width="8"/>
-          <path d="M0 96H310" stroke="#D9A21A" stroke-width="10"/>
-        </g>
-        <path d="M168 33l14 21h-26z" fill="#BFD4FF" stroke="#14161B" stroke-width="2.5" stroke-linejoin="round"/>
-        <circle cx="112" cy="80" r="16" fill="#fff" stroke="#14161B" stroke-width="3"/>
-        <text x="112" y="88" text-anchor="middle" font-family="Racing Sans One, Impact, sans-serif" font-size="23" fill="#D42A26">1</text>
-        <path d="M280 72q14 2 14 12h-14z" fill="#fff"/>
-        <!-- wheels -->
-        <g transform="translate(76 100)">
-          <circle r="28" fill="#14161B"/>
-          <g class="wheel">
-            <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
-            <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
-          </g>
-        </g>
-        <g transform="translate(232 100)">
-          <circle r="28" fill="#14161B"/>
-          <g class="wheel">
-            <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
-            <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
-          </g>
-        </g>
-      </svg>
+        <div class="speedlines"><span></span><span></span><span></span></div>
+
+        <div class="carTrack">
+          <svg class="car" viewBox="0 0 310 126" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="bodyClip">
+                <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z"/>
+              </clipPath>
+            </defs>
+            <!-- exhaust puffs -->
+            <g transform="translate(300 92)">
+              <circle class="puff p1" r="6" fill="#fff"/>
+              <circle class="puff p2" r="5" fill="#fff"/>
+              <circle class="puff p3" r="7" fill="#fff"/>
+            </g>
+            <!-- rear wing -->
+            <rect x="2" y="24" width="42" height="9" rx="4" fill="#14161B"/>
+            <rect x="17" y="33" width="7" height="28" fill="#14161B"/>
+            <!-- helmet -->
+            <circle cx="150" cy="29" r="13" fill="#fff" stroke="#14161B" stroke-width="3"/>
+            <path d="M152 23h12a4 4 0 0 1 4 4v3h-16z" fill="#14161B"/>
+            <!-- body -->
+            <path d="M14 96 L14 74 Q14 62 28 60 L92 56 L120 36 Q127 31 138 31 L164 31 Q173 31 179 38 L194 58 L266 66 Q296 70 296 88 L296 94 Q296 100 290 100 L20 100 Q14 100 14 96 Z" fill="#FFC933" stroke="#14161B" stroke-width="4" stroke-linejoin="round"/>
+            <g clip-path="url(#bodyClip)">
+              <path d="M0 83H310" stroke="#fff" stroke-width="8"/>
+              <path d="M0 96H310" stroke="#D9A21A" stroke-width="10"/>
+            </g>
+            <path d="M168 33l14 21h-26z" fill="#BFD4FF" stroke="#14161B" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="112" cy="80" r="16" fill="#fff" stroke="#14161B" stroke-width="3"/>
+            <text x="112" y="88" text-anchor="middle" font-family="Racing Sans One, Impact, sans-serif" font-size="23" fill="#D42A26">1</text>
+            <path d="M280 72q14 2 14 12h-14z" fill="#fff"/>
+            <!-- wheels -->
+            <g transform="translate(76 100)">
+              <circle r="28" fill="#14161B"/>
+              <g class="wheel">
+                <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
+                <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
+              </g>
+            </g>
+            <g transform="translate(232 100)">
+              <circle r="28" fill="#14161B"/>
+              <g class="wheel">
+                <circle r="24" fill="#2A2D36"/><circle r="12" fill="#D42A26"/>
+                <path d="M-12 0H12M0 -12V12" stroke="#fff" stroke-width="3"/><circle r="3.5" fill="#fff"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="road"></div>
     </div>
-    <div class="road"></div>
-  </div>
-</a>
+  </a>
+</div>
 
+<!-- Edit panel: lives OUTSIDE the <a> so it never triggers a navigation -->
+<div class="modal-overlay" id="editOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <h2 id="editTitle">Edit invitation card</h2>
+    <p class="hint">Changes are saved in this browser, so they'll show whenever you open this page again on this device. They won't change what other people see if you've already shared the link with them.</p>
+
+    <form id="editForm">
+      <label class="field"><span>Child's name (with 's)</span><input type="text" id="f_childName" maxlength="40"></label>
+      <div class="grid2">
+        <label class="field"><span>Ordinal (e.g. 1st)</span><input type="text" id="f_ordinal" maxlength="6"></label>
+        <label class="field"><span>Event title</span><input type="text" id="f_eventTitle" maxlength="30"></label>
+      </div>
+      <label class="field"><span>Tagline</span><input type="text" id="f_tagline" maxlength="120"></label>
+      <label class="field"><span>Date</span><input type="text" id="f_dateText" maxlength="40"></label>
+      <label class="field"><span>Time</span><input type="text" id="f_timeText" maxlength="20"></label>
+      <div class="grid2">
+        <label class="field"><span>Venue</span><input type="text" id="f_placeLine1" maxlength="30"></label>
+        <label class="field"><span>City</span><input type="text" id="f_placeLine2" maxlength="30"></label>
+      </div>
+      <label class="field"><span>Button text</span><input type="text" id="f_ctaText" maxlength="40"></label>
+      <label class="field"><span>Link this card opens</span><input type="url" id="f_link" placeholder="https://..."></label>
+
+      <fieldset>
+        <legend>Colors</legend>
+        <div class="grid2">
+          <div class="colorRow"><input type="color" id="f_red"><span>Race red</span></div>
+          <div class="colorRow"><input type="color" id="f_yellow"><span>Flag yellow</span></div>
+        </div>
+        <div class="colorRow" style="margin-top:10px"><input type="color" id="f_asphalt"><span>Asphalt</span></div>
+      </fieldset>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="editCancel">Cancel</button>
+        <button type="submit" class="btn-save">Save changes</button>
+      </div>
+      <button type="button" class="btn-reset" id="editReset">Reset to defaults</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "andreiRaceInviteCard";
+
+  var DEFAULTS = {
+    childName: "Andrei's",
+    ordinal: "1st",
+    eventTitle: "Birthday Race",
+    tagline: "Rev your engines and join us for a day of racing, snacks and cake.",
+    dateText: "Saturday, December 12, 2026",
+    timeText: "2:00 PM",
+    placeLine1: "KFC",
+    placeLine2: "Taguig City",
+    ctaText: "Tap to open your invitation",
+    link: "https://r28policher.github.io/dedoybirthdayrace/",
+    red: "#D42A26",
+    yellow: "#FFC933",
+    asphalt: "#14161B"
+  };
+
+  var card = document.getElementById("inviteCard");
+  var overlay = document.getElementById("editOverlay");
+  var form = document.getElementById("editForm");
+
+  function loadData() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return Object.assign({}, DEFAULTS);
+      var parsed = JSON.parse(raw);
+      return Object.assign({}, DEFAULTS, parsed);
+    } catch (e) {
+      return Object.assign({}, DEFAULTS);
+    }
+  }
+
+  function saveData(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function applyData(data) {
+    document.querySelectorAll("[data-e]").forEach(function (el) {
+      var key = el.getAttribute("data-e");
+      if (data[key] !== undefined) el.textContent = data[key];
+    });
+    card.setAttribute("href", data.link || DEFAULTS.link);
+    var root = document.documentElement.style;
+    root.setProperty("--red", data.red || DEFAULTS.red);
+    root.setProperty("--yellow", data.yellow || DEFAULTS.yellow);
+    root.setProperty("--asphalt", data.asphalt || DEFAULTS.asphalt);
+    document.title = "You have an invite! " + (data.childName || "") + " " + (data.ordinal || "") + " " + (data.eventTitle || "");
+  }
+
+  function fillForm(data) {
+    Object.keys(DEFAULTS).forEach(function (key) {
+      var input = document.getElementById("f_" + key);
+      if (input) input.value = data[key];
+    });
+  }
+
+  var current = loadData();
+  applyData(current);
+
+  function openEditor() {
+    fillForm(current);
+    overlay.classList.add("open");
+    document.getElementById("f_childName").focus();
+  }
+  function closeEditor() { overlay.classList.remove("open"); }
+
+  document.getElementById("editOpen").addEventListener("click", openEditor);
+  document.getElementById("editCancel").addEventListener("click", closeEditor);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeEditor(); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && overlay.classList.contains("open")) closeEditor();
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var next = {};
+    Object.keys(DEFAULTS).forEach(function (key) {
+      var input = document.getElementById("f_" + key);
+      next[key] = input ? input.value : DEFAULTS[key];
+    });
+    current = next;
+    saveData(current);
+    applyData(current);
+    closeEditor();
+  });
+
+  document.getElementById("editReset").addEventListener("click", function () {
+    current = Object.assign({}, DEFAULTS);
+    saveData(current);
+    applyData(current);
+    fillForm(current);
+  });
+})();
+</script>
 </body>
 </html>
